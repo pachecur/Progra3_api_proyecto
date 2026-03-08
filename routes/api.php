@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\EmpleadoController;
+use App\Http\Controllers\EstadoOrdenController;
 use App\Http\Controllers\TareaController;
 use App\Http\Controllers\TipoIdentificacionController;
 use Illuminate\Http\Request;
@@ -21,4 +23,18 @@ Route::prefix('tareas')->group(function () {
     Route::get('consultar/{id}', [TareaController::class, 'consultar']);
     Route::post('guardar', [TareaController::class, 'guardar']);
     Route::put('actualizar/{id}', [TareaController::class, 'actualizar']);
+});
+
+Route::prefix('empleados')->group(function () {
+    Route::get('listar', [EmpleadoController::class, 'listar']);
+    Route::get('consultar/{id}', [EmpleadoController::class, 'consultar']);
+    Route::post('guardar', [EmpleadoController::class, 'guardar']);
+    Route::put('actualizar/{id}', [EmpleadoController::class, 'actualizar']);
+});
+
+Route::prefix('estados-orden')->group(function () {
+    Route::get('listar', [EstadoOrdenController::class, 'listar']);
+    Route::get('consultar/{id}', [EstadoOrdenController::class, 'consultar']);
+    Route::post('guardar', [EstadoOrdenController::class, 'guardar']);
+    Route::put('actualizar/{id}', [EstadoOrdenController::class, 'actualizar']);
 });
