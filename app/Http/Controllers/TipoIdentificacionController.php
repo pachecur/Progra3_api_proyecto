@@ -6,57 +6,67 @@ use App\Models\TipoIdentificacion;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
+/**
+ * TipoIdentificacionController - CRUD (mismo patrón que api-matriculas).
+ */
 class TipoIdentificacionController extends Controller
 {
-    //Get listar
-
-    public function listar(): JsonResponse {
-       try {
-            $tiposIdentificacion = TipoIdentificacion::get();
-            return response()->json($tiposIdentificacion);
-        } catch (\Throwable $ex) {
-            return response()->json($ex->getMessage());
-        }
-    }
-
-    public function consultar($id): JsonResponse {
+    public function listar(): JsonResponse
+    {
         try {
-            $tipoIdentificacion = TipoIdentificacion::find($id);
-            if ($tipoIdentificacion) {
-                return response()->json($tipoIdentificacion);
-            } else {
-                return response()->json("Tipo de identificación no encontrado", 404);
-            }
+            $arrTipos = TipoIdentificacion::get();
+
+            return response()->json($arrTipos);
         } catch (\Throwable $ex) {
             return response()->json($ex->getMessage());
         }
     }
 
-    public function guardar(Request $request): JsonResponse {
+    public function consultar($id): JsonResponse
+    {
+        try {
+            $obTipo = TipoIdentificacion::find($id);
+
+            return response()->json($obTipo);
+        } catch (\Throwable $ex) {
+            return response()->json($ex->getMessage());
+        }
+    }
+
+    public function guardar(Request $request): JsonResponse
+    {
         try {
             $valido = $request->validate([
-                'nombre' => 'required|string|max:100',
+                'nombre' => 'required|string',
+                'mascara' => 'required|string',
             ]);
 
-            $tipoIdentificacion = TipoIdentificacion::create($valido);
-            return response()->json($tipoIdentificacion, 201);
+            TipoIdentificacion::create($valido);
+
+            return response()->json(1, 201);
         } catch (\Throwable $ex) {
             return response()->json($ex->getMessage());
         }
     }
 
-    public function actualizar(Request $request, $id): JsonResponse {
+    public function actualizar(Request $request): JsonResponse
+    {
         try {
+            $valido = $request->validate([
+                'id_tipo_identificacion' => 'required|integer',
+                'nombre' => 'required|string',
+                'mascara' => 'required|string',
+            ]);
 
+            $tipo = TipoIdentificacion::find($request['id_tipo_identificacion']);
 
-            $tipoIdentificacion = TipoIdentificacion::find($id);
-            if ($tipoIdentificacion) {
-                $tipoIdentificacion->nombre = $request->nombre;
-                $tipoIdentificacion->save();
-                return response()->json($tipoIdentificacion);
-            } else {
-                return response()->json("Tipo de identificación no encontrado", 404);
+            if ($tipo) {
+                $tipo->update($valido);
+
+                return response()->json(1);
             }
+
+            return response()->json(0, 404);
         } catch (\Throwable $ex) {
             return response()->json($ex->getMessage());
         }

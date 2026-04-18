@@ -5,83 +5,107 @@ namespace App\Http\Controllers;
 use App\Models\Empleado;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
+/**
+ * EmpleadoController - CRUD + estado (mismo estilo que Profesor en Example).
+ */
 class EmpleadoController extends Controller
 {
-    //Get listar
+    public function listar(): JsonResponse
+    {
+        try {
+            $arr = Empleado::with('tipoIdentificacion')->get();
 
-    public function listar(): JsonResponse {
-       try {
-            $empleados = Empleado::get();
-            return response()->json($empleados);
+            return response()->json($arr);
         } catch (\Throwable $ex) {
             return response()->json($ex->getMessage());
         }
     }
 
-    public function consultar($id): JsonResponse {
+    public function consultar($id): JsonResponse
+    {
         try {
-            $empleado = Empleado::find($id);
+            return response()->json(Empleado::with('tipoIdentificacion')->find($id));
+        } catch (\Throwable $ex) {
+            return response()->json($ex->getMessage());
+        }
+    }
+
+    public function guardar(Request $request): JsonResponse
+    {
+        try {
+            $valido = $request->validate([
+                'tipo_identificacion' => 'required',
+                'identificacion' => 'required|string|max:20',
+                'nombre' => 'required|string|max:100',
+                'apellidos' => 'required|string|max:100',
+                'telefono' => 'required|string|max:20',
+                'correo' => ['required', 'email', Rule::unique('tbl_empleado', 'correo')],
+                'direccion' => 'required|string|max:255',
+                'puesto' => 'required|string|max:100',
+                'estado' => 'required|boolean',
+            ]);
+
+            $valido['id_tipo_identificacion'] = $request['tipo_identificacion']['id_tipo_identificacion'];
+            unset($valido['tipo_identificacion']);
+            $valido['estado'] = $request->boolean('estado') ? 1 : 0;
+
+            Empleado::create($valido);
+
+            return response()->json(1, 201);
+        } catch (\Throwable $ex) {
+            return response()->json($ex->getMessage());
+        }
+    }
+
+    public function actualizar(Request $request): JsonResponse
+    {
+        try {
+            $valido = $request->validate([
+                'id_empleado' => 'required|integer',
+                'tipo_identificacion' => 'required',
+                'identificacion' => 'required|string|max:20',
+                'nombre' => 'required|string|max:100',
+                'apellidos' => 'required|string|max:100',
+                'telefono' => 'required|string|max:20',
+                'correo' => [
+                    'required',
+                    'email',
+                    Rule::unique('tbl_empleado', 'correo')->ignore($request['id_empleado'], 'id_empleado'),
+                ],
+                'direccion' => 'required|string|max:255',
+                'puesto' => 'required|string|max:100',
+                'estado' => 'required|integer',
+            ]);
+
+            $valido['id_tipo_identificacion'] = $request['tipo_identificacion']['id_tipo_identificacion'];
+            unset($valido['tipo_identificacion']);
+
+            $empleado = Empleado::find($request['id_empleado']);
             if ($empleado) {
-                return response()->json($empleado);
-            } else {
-                return response()->json("Empleado no encontrado", 404);
+                $empleado->update($valido);
+
+                return response()->json(1, 200);
             }
+
+            return response()->json(0, 404);
         } catch (\Throwable $ex) {
             return response()->json($ex->getMessage());
         }
     }
 
-    public function guardar(Request $request): JsonResponse {
+    public function estado(Request $request): JsonResponse
+    {
         try {
-            $valido = $request->validate([
-                'id_tipo_identificacion' => 'required|integer',
-                'identificacion' => 'required|string|max:20',
-                'nombre' => 'required|string|max:100',
-                'apellidos' => 'required|string|max:100',
-                'telefono' => 'required|string|max:20',
-                'correo' => 'required|email|unique:tbl_empleado,correo',
-                'estado' => 'required|string',
-            ]);
+            $empleado['id_empleado'] = $request['id_empleado'];
+            $empleado['estado'] = $request['estado'] ? 1 : 0;
 
-            $empleado = Empleado::create($valido);
-            return response()->json($empleado, 201);
+            Empleado::findOrFail($empleado['id_empleado'])->update(['estado' => $empleado['estado']]);
+
+            return response()->json(1, 200);
         } catch (\Throwable $ex) {
             return response()->json($ex->getMessage());
-        }
-    }
-
-    public function actualizar(Request $request, $id): JsonResponse {
-        try {
-            $valido = $request->validate([
-                'id_tipo_identificacion' => 'required|integer',
-                'identificacion' => 'required|string|max:20',
-                'nombre' => 'required|string|max:100',
-                'apellidos' => 'required|string|max:100',
-                'telefono' => 'required|string|max:20',
-                'correo' => 'required|email|unique:tbl_empleado,correo',
-                'estado' => 'required|string',
-            ]);
-            if($valido) {
-              $empleado = Empleado::find($id);
-              if ($empleado) {
-                  $empleado->id_tipo_identificacion = $request->id_tipo_identificacion;
-                  $empleado->identificacion = $request->identificacion;
-                  $empleado->nombre = $request->nombre;
-                  $empleado->apellidos = $request->apellidos;
-                  $empleado->telefono = $request->telefono;
-                  $empleado->correo = $request->correo;
-                  $empleado->estado = $request->estado;
-                  $empleado->save();
-                  return response()->json($empleado);
-              } else {
-                  return response()->json("Empleado no encontrado", 404);
-              }
-            } else {
-                return response()->json("Datos no válidos", 400);
-            }   
-        } catch (\Throwable $ex) {
-            return response()->json($ex->getMessage(), 500);
         }
     }
 }

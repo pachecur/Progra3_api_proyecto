@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Tarea;
+use App\Models\Usuario;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
- * TareaController - CRUD + cambio de estado (patrón Example).
+ * UsuarioController - CRUD usuarios del sistema (mismo contrato que api-matriculas).
  */
-class TareaController extends Controller
+class UsuarioController extends Controller
 {
     public function listar(): JsonResponse
     {
         try {
-            return response()->json(Tarea::get());
+            return response()->json(Usuario::all());
         } catch (\Throwable $ex) {
             return response()->json($ex->getMessage());
         }
@@ -23,7 +23,7 @@ class TareaController extends Controller
     public function consultar($id): JsonResponse
     {
         try {
-            return response()->json(Tarea::find($id));
+            return response()->json(Usuario::find($id));
         } catch (\Throwable $ex) {
             return response()->json($ex->getMessage());
         }
@@ -33,16 +33,14 @@ class TareaController extends Controller
     {
         try {
             $valido = $request->validate([
-                'nombre' => 'required|string|max:100',
-                'descripcion' => 'required|string',
-                'hora_inicio' => 'required|date_format:H:i:s',
-                'hora_fin' => 'required|date_format:H:i:s|after:hora_inicio',
-                'estado' => 'required|boolean',
+                'nombre' => 'required|string',
+                'apellidos' => 'required|string',
+                'acceso' => 'required|string',
+                'secreto' => 'required|string',
+                'estado' => 'required|integer',
             ]);
 
-            $valido['estado'] = $request->boolean('estado') ? 1 : 0;
-
-            Tarea::create($valido);
+            Usuario::create($valido);
 
             return response()->json(1, 201);
         } catch (\Throwable $ex) {
@@ -54,19 +52,21 @@ class TareaController extends Controller
     {
         try {
             $valido = $request->validate([
-                'id_tarea' => 'required|integer',
-                'nombre' => 'required|string|max:100',
-                'descripcion' => 'required|string',
-                'hora_inicio' => 'required|date_format:H:i:s',
-                'hora_fin' => 'required|date_format:H:i:s|after:hora_inicio',
+                'id_usuario' => 'required|integer',
+                'nombre' => 'required|string',
+                'apellidos' => 'required|string',
+                'acceso' => 'required|string',
                 'estado' => 'required|integer',
             ]);
 
-            $tarea = Tarea::find($request['id_tarea']);
-            if ($tarea) {
-                $tarea->update($valido);
+            $usuario = Usuario::find($request['id_usuario']);
+            if ($usuario) {
+                if ($request->has('secreto') && $request['secreto'] != '') {
+                    $valido['secreto'] = $request['secreto'];
+                }
+                $usuario->update($valido);
 
-                return response()->json(1);
+                return response()->json(1, 200);
             }
 
             return response()->json(0, 404);
@@ -78,10 +78,9 @@ class TareaController extends Controller
     public function estado(Request $request): JsonResponse
     {
         try {
-            $payload['id_tarea'] = $request['id_tarea'];
-            $payload['estado'] = $request['estado'] ? 1 : 0;
-
-            Tarea::findOrFail($payload['id_tarea'])->update(['estado' => $payload['estado']]);
+            $usuario['id_usuario'] = $request['id_usuario'];
+            $usuario['estado'] = $request['estado'];
+            Usuario::findOrFail($usuario['id_usuario'])->update($usuario);
 
             return response()->json(1, 200);
         } catch (\Throwable $ex) {

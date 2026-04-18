@@ -6,57 +6,60 @@ use App\Models\EstadoDeOrden;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
+/**
+ * EstadoOrdenController - CRUD estados de orden (patrón Example).
+ */
 class EstadoOrdenController extends Controller
 {
-    //Get listar
-
-    public function listar(): JsonResponse {
-       try {
-            $estadosDeOrden = EstadoDeOrden::get();
-            return response()->json($estadosDeOrden);
-        } catch (\Throwable $ex) {
-            return response()->json($ex->getMessage());
-        }
-    }
-
-    public function consultar($id): JsonResponse {
+    public function listar(): JsonResponse
+    {
         try {
-            $estadoDeOrden = EstadoDeOrden::find($id);
-            if ($estadoDeOrden) {
-                return response()->json($estadoDeOrden);
-            } else {
-                return response()->json("Estado de orden no encontrado", 404);
-            }
+            return response()->json(EstadoDeOrden::get());
         } catch (\Throwable $ex) {
             return response()->json($ex->getMessage());
         }
     }
 
-    public function guardar(Request $request): JsonResponse {
+    public function consultar($id): JsonResponse
+    {
+        try {
+            return response()->json(EstadoDeOrden::find($id));
+        } catch (\Throwable $ex) {
+            return response()->json($ex->getMessage());
+        }
+    }
+
+    public function guardar(Request $request): JsonResponse
+    {
         try {
             $valido = $request->validate([
                 'nombre' => 'required|string|max:100',
             ]);
 
-            $estadoDeOrden = EstadoDeOrden::create($valido);
-            return response()->json($estadoDeOrden, 201);
+            EstadoDeOrden::create($valido);
+
+            return response()->json(1, 201);
         } catch (\Throwable $ex) {
             return response()->json($ex->getMessage());
         }
     }
 
-    public function actualizar(Request $request, $id): JsonResponse {
+    public function actualizar(Request $request): JsonResponse
+    {
         try {
+            $valido = $request->validate([
+                'id_estado_orden' => 'required|integer',
+                'nombre' => 'required|string|max:100',
+            ]);
 
+            $estado = EstadoDeOrden::find($request['id_estado_orden']);
+            if ($estado) {
+                $estado->update($valido);
 
-            $estadoDeOrden = EstadoDeOrden::find($id);
-            if ($estadoDeOrden) {
-                $estadoDeOrden->nombre = $request->nombre;
-                $estadoDeOrden->save();
-                return response()->json($estadoDeOrden);
-            } else {
-                return response()->json("Estado de orden no encontrado", 404);
+                return response()->json(1);
             }
+
+            return response()->json(0, 404);
         } catch (\Throwable $ex) {
             return response()->json($ex->getMessage());
         }

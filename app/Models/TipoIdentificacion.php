@@ -13,5 +13,6 @@ class TipoIdentificacion extends Model
     protected $fillable = [
         'id_tipo_identificacion',
         'nombre',
+        'mascara',
     ];
 }
