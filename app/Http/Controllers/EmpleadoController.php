@@ -7,9 +7,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-/**
- * EmpleadoController - CRUD + estado (mismo estilo que Profesor en Example).
- */
 class EmpleadoController extends Controller
 {
     public function listar(): JsonResponse
@@ -36,7 +33,8 @@ class EmpleadoController extends Controller
     {
         try {
             $valido = $request->validate([
-                'tipo_identificacion' => 'required',
+                'tipo_identificacion' => 'required|array',
+                'tipo_identificacion.id_tipo_identificacion' => 'required|integer|exists:tbl_tipo_identificacion,id_tipo_identificacion',
                 'identificacion' => 'required|string|max:20',
                 'nombre' => 'required|string|max:100',
                 'apellidos' => 'required|string|max:100',
@@ -64,7 +62,8 @@ class EmpleadoController extends Controller
         try {
             $valido = $request->validate([
                 'id_empleado' => 'required|integer',
-                'tipo_identificacion' => 'required',
+                'tipo_identificacion' => 'required|array',
+                'tipo_identificacion.id_tipo_identificacion' => 'required|integer|exists:tbl_tipo_identificacion,id_tipo_identificacion',
                 'identificacion' => 'required|string|max:20',
                 'nombre' => 'required|string|max:100',
                 'apellidos' => 'required|string|max:100',

@@ -6,9 +6,6 @@ use App\Models\TipoIdentificacion;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-/**
- * TipoIdentificacionController - CRUD (mismo patrón que api-matriculas).
- */
 class TipoIdentificacionController extends Controller
 {
     public function listar(): JsonResponse

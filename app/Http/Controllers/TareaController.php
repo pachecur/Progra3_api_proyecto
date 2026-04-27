@@ -6,9 +6,6 @@ use App\Models\Tarea;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-/**
- * TareaController - CRUD + cambio de estado (patrón Example).
- */
 class TareaController extends Controller
 {
     public function listar(): JsonResponse

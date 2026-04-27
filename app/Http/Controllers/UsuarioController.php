@@ -6,9 +6,6 @@ use App\Models\Usuario;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-/**
- * UsuarioController - CRUD usuarios del sistema (mismo contrato que api-matriculas).
- */
 class UsuarioController extends Controller
 {
     public function listar(): JsonResponse

@@ -8,17 +8,8 @@ use App\Models\Tarea;
 use App\Models\TipoIdentificacion;
 use Illuminate\Http\JsonResponse;
 
-/**
- * DashboardController - resumen para la pantalla de inicio (patrón Example).
- */
 class DashboardController extends Controller
 {
-    /**
-     * GET /api/dashboard/resumen
-     *
-     * Conteos alineados con el dominio del proyecto: empleados y tareas activos (estado = 1),
-     * catálogos de estados de orden y tipos de identificación (todos los registros).
-     */
     public function resumen(): JsonResponse
     {
         return response()->json([

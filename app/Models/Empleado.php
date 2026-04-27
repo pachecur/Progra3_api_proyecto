@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Empleado extends Model
 {
@@ -31,5 +32,10 @@ class Empleado extends Model
     public function tipoIdentificacion(): BelongsTo
     {
         return $this->belongsTo(TipoIdentificacion::class, 'id_tipo_identificacion', 'id_tipo_identificacion');
+    }
+
+    public function ordenesTrabajo(): HasMany
+    {
+        return $this->hasMany(OrdenTrabajo::class, 'id_empleado', 'id_empleado');
     }
 }

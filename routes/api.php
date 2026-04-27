@@ -9,6 +9,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmpleadoController;
 use App\Http\Controllers\EstadoOrdenController;
+use App\Http\Controllers\OrdenTrabajoController;
 use App\Http\Controllers\TareaController;
 use App\Http\Controllers\TipoIdentificacionController;
 use App\Http\Controllers\UsuarioController;
@@ -57,6 +58,13 @@ Route::middleware('auth:api')->group(function () {
         Route::post('guardar', [EmpleadoController::class, 'guardar']);
         Route::put('actualizar', [EmpleadoController::class, 'actualizar']);
         Route::patch('estado', [EmpleadoController::class, 'estado']);
+    });
+
+    Route::prefix('orden-trabajo')->group(function () {
+        Route::get('listar', [OrdenTrabajoController::class, 'listar']);
+        Route::get('consultar/{id}', [OrdenTrabajoController::class, 'consultar']);
+        Route::post('guardar', [OrdenTrabajoController::class, 'guardar']);
+        Route::put('actualizar', [OrdenTrabajoController::class, 'actualizar']);
     });
 
     Route::prefix('usuario')->group(function () {

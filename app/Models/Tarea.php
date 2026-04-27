@@ -3,13 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Tarea extends Model
 {
-    // Declaración de propiedades de la entidad.
-    public $timestamps = false; 
+    public $timestamps = false;
+
     protected $table = 'tbl_tarea';
+
     protected $primaryKey = 'id_tarea';
+
     protected $fillable = [
         'id_tarea',
         'nombre',
@@ -18,4 +21,9 @@ class Tarea extends Model
         'hora_fin',
         'estado',
     ];
+
+    public function ordenTrabajoTareas(): HasMany
+    {
+        return $this->hasMany(OrdenTrabajoTarea::class, 'id_tarea', 'id_tarea');
+    }
 }

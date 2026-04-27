@@ -6,9 +6,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-/**
- * Modelo Usuario - tabla tbl_usuario (autenticación JWT).
- */
 class Usuario extends Authenticatable implements JWTSubject
 {
     protected $table = 'tbl_usuario';

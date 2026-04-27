@@ -9,9 +9,6 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 
-/**
- * AuthController - Autenticación JWT (mismo patrón que api-matriculas).
- */
 class AuthController extends Controller
 {
     public function login(Request $request)

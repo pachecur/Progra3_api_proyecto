@@ -6,9 +6,6 @@ use App\Models\EstadoDeOrden;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-/**
- * EstadoOrdenController - CRUD estados de orden (patrón Example).
- */
 class EstadoOrdenController extends Controller
 {
     public function listar(): JsonResponse
